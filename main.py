@@ -23,6 +23,23 @@ def get_recipe_reviews(id):
         if each["recipe_id"] == int(id):
             result.append(each)
     return result
+@app.get("/recipe/<id>/most-recent")
+def get_most_recent_reviews(id):
+    recent_reviews = sorted(
+        (review for review in all_reviews if review["recipe_id"] == int(id)),
+        key=lambda x: x["date"],
+        reverse=True
+    )
+    return recent_reviews
+
+@app.get("/recipe/<id>/top-rated")
+def get_top_rated_reviews(id):
+    top_reviews = sorted(
+        (review for review in all_reviews if review["recipe_id"] == int(id)),
+        key=lambda x: x["upvotes"],
+        reverse=True
+    )
+    return top_reviews
 
 @app.get("/user/<id>")
 def get_user_reviews(id):
