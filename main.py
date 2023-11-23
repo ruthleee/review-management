@@ -13,7 +13,7 @@ def hello():
 
 @app.get("/reviews")
 def get_all_reviews():
-    return all_reviews
+    return all_reviews\
 
 @app.get("/recipe/<id>")
 def get_recipe_reviews(id):
@@ -50,6 +50,38 @@ def get_user_reviews(id):
             result.append(each)
     return result
 
+
+@app.route("/post_review", methods=['POST'])
+def post_review():
+    """
+    Endpoint for posting a new review.
+    Expects a JSON payload with the necessary data.
+    """
+    data = flask.request.get_json()
+
+    # Example of extracting required fields from the JSON payload
+    review_id = reviews_resource.generate_next_id()
+    recipe_id = data.get('recipe_id')
+    user_id = data.get('user_id')
+    text = data.get('text')
+    rating = data.get('rating')
+    date = data.get('date')
+
+    # Perform any necessary validation or processing with the received data
+    # For simplicity, this example just adds a new review to the existing list
+    new_review = {
+        'review_id': review_id,
+        'recipe_id': recipe_id,
+        'user_id': user_id,
+        'rating': rating,
+        'date': date,
+        'text': text,
+        'upvotes': 0,
+        'downvotes': 0,
+    }
+
+    reviews_resource.add_review(new_review)
+    return flask.jsonify({'message': 'Review posted successfully'}), 201  # 201 Created status code
 
 if __name__ == "__main__":
     # Used when running locally only. When deploying to Google App
