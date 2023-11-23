@@ -83,6 +83,17 @@ def post_review():
     reviews_resource.add_review(new_review)
     return flask.jsonify({'message': 'Review posted successfully'}), 201  # 201 Created status code
 
+@app.route("/delete_review/<review_id>", methods=['DELETE'])
+def delete_review(review_id):
+    global all_reviews
+    total_reviews = len(all_reviews)
+    all_reviews = [review for review in all_reviews if review["review_id"] != int(review_id)]
+
+    if total_reviews != len(all_reviews):
+        return {"message": f"Review {review_id} has been successfully deleted"}
+    else:
+        flask.abort(404, f"Review {review_id} not found")
+
 if __name__ == "__main__":
     # Used when running locally only. When deploying to Google App
     # Engine, a webserver process such as Gunicorn will serve the app. This
