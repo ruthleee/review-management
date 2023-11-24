@@ -13,7 +13,14 @@ def hello():
 
 @app.get("/reviews")
 def get_all_reviews():
-    return all_reviews\
+    #pagination implemented
+    page = flask.request.args.get('page', default=1, type=int)
+    items_per_page = flask.request.args.get('items_per_page', default=5, type=int)
+
+    start_idx = (page - 1) * items_per_page
+    end_idx = start_idx + items_per_page
+    paginated_reviews = all_reviews[start_idx:end_idx]
+    return flask.jsonify(paginated_reviews)
 
 @app.get("/recipe/<id>")
 def get_recipe_reviews(id):
