@@ -32,3 +32,10 @@ class ReviewsResource:
         self.reviews.append(review_info)
         with open(self.students_file, 'w') as file:
             json.dump(self.reviews, file, indent=2)
+
+    def update_review(self, review_id, new_review_text):
+        for review in self.reviews:
+            if review['review_id'] == review_id :
+                review['text'] = new_review_text
+        with open(self.students_file, 'w') as file:
+            json.dump(self.reviews, file, indent=2)
