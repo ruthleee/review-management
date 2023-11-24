@@ -74,8 +74,6 @@ def post_review():
     rating = data.get('rating')
     date = data.get('date')
 
-    # Perform any necessary validation or processing with the received data
-    # For simplicity, this example just adds a new review to the existing list
     new_review = {
         'review_id': review_id,
         'recipe_id': recipe_id,
@@ -88,7 +86,7 @@ def post_review():
     }
 
     reviews_resource.add_review(new_review)
-    return flask.jsonify({'message': 'Review posted successfully'}), 201  # 201 Created status code
+    return flask.jsonify({'message': 'Review posted successfully'}), 201 
 
 @app.route("/delete_review/<review_id>", methods=['DELETE'])
 def delete_review(review_id):
@@ -100,6 +98,20 @@ def delete_review(review_id):
         return {"message": f"Review {review_id} has been successfully deleted"}
     else:
         flask.abort(404, f"Review {review_id} not found")
+
+@app.route("/update_review", methods=['PUT'])
+def update_review():
+    data = flask.request.get_json()
+    review_id = data.get('review_id')
+
+    new_review_text = data.get('new_review_text')
+
+    for review in all_reviews:
+        if review['review_id'] == review_id :
+            print("HIIIIIIII")
+            reviews_resource.update_review(review_id, new_review_text)
+            return flask.jsonify({'message': 'Review updated successfully'}), 200
+    return flask.jsonify({'error': 'Review not found'}), 404
 
 if __name__ == "__main__":
     # Used when running locally only. When deploying to Google App
