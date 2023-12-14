@@ -78,25 +78,5 @@
     "text": "The recipe was tasty, but the preparation took longer than expected. Good flavor, but needs quicker prep.",
     "upvotes": 8,
     "downvotes": 0
-  },
-  {
-    "review_id": 9,
-    "recipe_id": 12,
-    "user_id": "linda_h",
-    "date": "2022-10-22T05:47:36.234Z",
-    "rating": 3,
-    "text": "I enjoyed the overall experience, but I found the cooking time to be inaccurate.",
-    "upvotes": 7,
-    "downvotes": 1
-  },
-  {
-    "review_id": 10,
-    "recipe_id": 12,
-    "user_id": "sarah_m",
-    "rating": 4,
-    "date": "2023-11-23T19:27:51.987Z",
-    "text": "The recipe was great!",
-    "upvotes": 0,
-    "downvotes": 0
   }
 ]

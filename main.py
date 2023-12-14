@@ -1,6 +1,9 @@
 import flask
 from reviews import ReviewsResource
+import notif
+import json
 from jose import jwt, JWTError
+
 # If `entrypoint` is not defined in app.yaml, App Engine will look for an app
 # called `app` in `main.py`.
 app = flask.Flask(__name__)
@@ -116,6 +119,9 @@ def delete_review(review_id):
     all_reviews = [review for review in all_reviews if review["review_id"] != int(review_id)]
 
     if total_reviews != len(all_reviews):
+        with open('reviews.json', 'w') as file:
+            json.dump(all_reviews, file, indent=2)
+        notif.send_deleted_notif()
         return {"message": f"Review {review_id} has been successfully deleted"}
     else:
         flask.abort(404, f"Review {review_id} not found")
