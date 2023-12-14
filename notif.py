@@ -1,4 +1,3 @@
-"""Publishes multiple messages to a Pub/Sub topic with an error handler."""
 from concurrent import futures
 from google.cloud import pubsub_v1
 from typing import Callable
@@ -24,15 +23,12 @@ def get_callback(
     return callback
 
 def send_deleted_notif():
-    data = "Review has been deleted"
-    # When you publish a message, the client returns a future.
-    publish_future = publisher.publish(topic_path, data.encode("utf-8"))
-    # Non-blocking. Publish failures are handled in the callback function.
-    publish_future.add_done_callback(get_callback(publish_future, data))
+    msg = "Review has been deleted"
+    publish_future = publisher.publish(topic_path, msg.encode("utf-8"))
+    publish_future.add_done_callback(get_callback(publish_future, msg))
     publish_futures.append(publish_future)
 
-    # Wait for all the publish futures to resolve before exiting.
     futures.wait(publish_futures, return_when=futures.ALL_COMPLETED)
 
-    print(f"Published messages with error handler to {topic_path}.")
+    print(f"Published message to {topic_path}.")
 
