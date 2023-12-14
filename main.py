@@ -1,5 +1,6 @@
 import flask
 from reviews import ReviewsResource
+from jose import jwt, JWTError
 import notif
 import json
 # If `entrypoint` is not defined in app.yaml, App Engine will look for an app
@@ -8,11 +9,31 @@ app = flask.Flask(__name__)
 reviews_resource = ReviewsResource()
 all_reviews = reviews_resource.get_reviews()
 
+SECRET_KEY = "secret"
+
+def authorize_jwt():
+    jwt_token = flask.request.headers.get("Authorization")
+    if not jwt_token:
+        flask.abort(401, "You are unauthorized to access this page")
+    try:
+        token = jwt_token.split(" ")[1]
+        #decode the JWT Token
+        decoded_jwt_token = jwt.decode(token,SECRET_KEY, algorithms = ["HS256"])
+        user_id = decoded_jwt_token.get("sub")
+        return user_id
+    except JWTError as e:
+        flask.abort(401, f"Invalid token error: {str(e)}")
 @app.get("/")
 def hello():
     """Return a friendly HTTP greeting."""
     return "Hello Review Management!!!\n"
 
+@app.get("/authorized_reviews")
+def authorized_get_all_reviews():
+    #ONLY to check JWT Token authorization working
+    # authorize with user_id
+    user_id = authorize_jwt()
+    return all_reviews
 @app.get("/reviews")
 def get_all_reviews():
     #pagination implemented
@@ -104,7 +125,6 @@ def delete_review(review_id):
     else:
         flask.abort(404, f"Review {review_id} not found")
 
-
 @app.route("/update_review", methods=['PUT'])
 def update_review():
     data = flask.request.get_json()
@@ -114,6 +134,7 @@ def update_review():
 
     for review in all_reviews:
         if review['review_id'] == review_id :
+            print("HIIIIIIII")
             reviews_resource.update_review(review_id, new_review_text)
             return flask.jsonify({'message': 'Review updated successfully'}), 200
     return flask.jsonify({'error': 'Review not found'}), 404
