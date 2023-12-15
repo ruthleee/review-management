@@ -3,12 +3,18 @@ from reviews import ReviewsResource
 import notif
 import json
 from jose import jwt, JWTError
+from flask_http_middleware import MiddlewareManager
+from middleware import MetricsMiddleware
 
 # If `entrypoint` is not defined in app.yaml, App Engine will look for an app
 # called `app` in `main.py`.
 app = flask.Flask(__name__)
 reviews_resource = ReviewsResource()
 all_reviews = reviews_resource.get_reviews()
+
+
+app.wsgi_app = MiddlewareManager(app)
+app.wsgi_app.add_middleware(MetricsMiddleware)
 
 SECRET_KEY = "secret"
 
