@@ -1,5 +1,6 @@
 import flask
 from reviews import ReviewsResource
+from resources.reviews_data_service import ReviewsDataService
 import notif
 import json
 from jose import jwt, JWTError
@@ -11,6 +12,7 @@ from middleware import MetricsMiddleware
 app = flask.Flask(__name__)
 reviews_resource = ReviewsResource()
 all_reviews = reviews_resource.get_reviews()
+ds_reviews = ReviewsDataService()
 
 
 app.wsgi_app = MiddlewareManager(app)
@@ -40,7 +42,8 @@ def authorized_get_all_reviews():
     #ONLY to check JWT Token authorization working
     # authorize with user_id
     user_id = authorize_jwt()
-    return all_reviews
+    rev = ds_reviews.get_all_reviews()
+    return rev
 @app.get("/reviews")
 def get_all_reviews():
     #pagination implemented
@@ -49,7 +52,8 @@ def get_all_reviews():
 
     start_idx = (page - 1) * items_per_page
     end_idx = start_idx + items_per_page
-    paginated_reviews = all_reviews[start_idx:end_idx]
+    rev = ds_reviews.get_all_reviews()
+    paginated_reviews = rev[start_idx:end_idx]
     return flask.jsonify(paginated_reviews)
 
 @app.get("/recipe/<id>")
@@ -59,33 +63,21 @@ def get_recipe_reviews(id):
     for each in all_reviews:
         if each["recipe_id"] == int(id):
             result.append(each)
-    return result
+    return ds_reviews.get_review_for_recipe(int(id))
+
+
 @app.get("/recipe/<id>/most-recent")
 def get_most_recent_reviews(id):
-    recent_reviews = sorted(
-        (review for review in all_reviews if review["recipe_id"] == int(id)),
-        key=lambda x: x["date"],
-        reverse=True
-    )
-    return recent_reviews
+    return ds_reviews.get_mostrecent_for_recipe(int(id))
 
 @app.get("/recipe/<id>/top-rated")
 def get_top_rated_reviews(id):
-    top_reviews = sorted(
-        (review for review in all_reviews if review["recipe_id"] == int(id)),
-        key=lambda x: x["upvotes"],
-        reverse=True
-    )
-    return top_reviews
+    return ds_reviews.get_toprated_for_recipe(int(id))
 
 @app.get("/user/<id>")
 def get_user_reviews(id):
-    # return("bruh ")
-    result = []
-    for each in all_reviews:
-        if each["user_id"] == id:
-            result.append(each)
-    return result
+    return ds_reviews.get_review_for_user(id)
+
 
 
 @app.route("/post_review", methods=['POST'])
@@ -116,10 +108,21 @@ def post_review():
     }
 
     reviews_resource.add_review(new_review)
-    return flask.jsonify({'message': 'Review posted successfully'}), 201 
+    added_rev = ds_reviews.add_review(recipe_id,user_id,rating,date,text,0,0)
+    if added_rev != None:
+        return flask.jsonify({'message': 'Review added successfully' + str(added_rev)}), 200
+    else:
+        return flask.jsonify({'error': 'Could not create review'}), 404
 
 @app.route("/delete_review/<review_id>", methods=['DELETE'])
 def delete_review(review_id):
+
+    del_rev = ds_reviews.delete_review(review_id)
+    if del_rev != None:
+        return flask.jsonify({'message': 'Review deleted successfully' + str(del_rev)}), 200
+    else:
+        return flask.jsonify({'error': 'Could not create review'}), 404
+    
     global all_reviews
     total_reviews = len(all_reviews)
     all_reviews = [review for review in all_reviews if review["review_id"] != int(review_id)]
@@ -139,12 +142,13 @@ def update_review():
 
     new_review_text = data.get('new_review_text')
 
-    for review in all_reviews:
-        if review['review_id'] == review_id :
-            print("HIIIIIIII")
-            reviews_resource.update_review(review_id, new_review_text)
-            return flask.jsonify({'message': 'Review updated successfully'}), 200
-    return flask.jsonify({'error': 'Review not found'}), 404
+    mod_rev = ds_reviews.modify_review_text(review_id, new_review_text)
+    print("HELLO")
+    print(str(mod_rev))
+    if mod_rev != None:
+        return flask.jsonify({'message': 'Review updated successfully' + str(mod_rev)}), 200
+    else:
+        return flask.jsonify({'error': 'Review not found'}), 404
 
 if __name__ == "__main__":
     # Used when running locally only. When deploying to Google App

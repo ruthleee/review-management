@@ -6,8 +6,8 @@ url = 'http://localhost:8080/post_review'  # Adjust the URL if needed
 # JSON payload for the POST request
 payload = {
     "recipe_id": 12,
-    "user_id": "laura123",
-    "date": "2023-11-25T19:27:51.987Z",
+    "user_id": "ruth13",
+    "date": "2023-12-16T19:27:51.987Z",
     "rating": 1,
     "text": "The recipe tasted terrible!",
 }

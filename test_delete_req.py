@@ -1,7 +1,7 @@
 import requests
 import json
 
-url = 'http://localhost:8080/delete_review/9'
+url = 'http://localhost:8080/delete_review/11'
 
 response = requests.delete(url)
 
