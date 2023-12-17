@@ -2,4 +2,8 @@
 Flask
 Werkzeug
 flask-http-middleware
+middleware
 mysql-connector
+flask-cors
+google-cloud-pubsub
+python-jose
