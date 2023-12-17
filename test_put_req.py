@@ -4,8 +4,8 @@ import json
 url = 'http://localhost:8080/update_review'  # Adjust the URL if needed
 
 payload = {
-    'review_id': 10,
-    'new_review_text': "Update: I added more cream cheese and it tasted better."
+    'review_id': 4,
+    'new_review_text': "Update: I added more cream cheese and it tasted way too decadent."
 }
 
 response = requests.put(url, json=payload)
