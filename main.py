@@ -58,11 +58,6 @@ def get_all_reviews():
 
 @app.get("/recipe/<id>")
 def get_recipe_reviews(id):
-    # return("bruh ")
-    result = []
-    for each in all_reviews:
-        if each["recipe_id"] == int(id):
-            result.append(each)
     return ds_reviews.get_review_for_recipe(int(id))
 
 
@@ -96,18 +91,6 @@ def post_review():
     rating = data.get('rating')
     date = data.get('date')
 
-    new_review = {
-        'review_id': review_id,
-        'recipe_id': recipe_id,
-        'user_id': user_id,
-        'rating': rating,
-        'date': date,
-        'text': text,
-        'upvotes': 0,
-        'downvotes': 0,
-    }
-
-    reviews_resource.add_review(new_review)
     added_rev = ds_reviews.add_review(recipe_id,user_id,rating,date,text,0,0)
     if added_rev != None:
         return flask.jsonify({'message': 'Review added successfully' + str(added_rev)}), 200
@@ -119,21 +102,11 @@ def delete_review(review_id):
 
     del_rev = ds_reviews.delete_review(review_id)
     if del_rev != None:
+        notif.send_deleted_notif()
         return flask.jsonify({'message': 'Review deleted successfully' + str(del_rev)}), 200
     else:
         return flask.jsonify({'error': 'Could not create review'}), 404
-    
-    global all_reviews
-    total_reviews = len(all_reviews)
-    all_reviews = [review for review in all_reviews if review["review_id"] != int(review_id)]
 
-    if total_reviews != len(all_reviews):
-        with open('reviews.json', 'w') as file:
-            json.dump(all_reviews, file, indent=2)
-        notif.send_deleted_notif()
-        return {"message": f"Review {review_id} has been successfully deleted"}
-    else:
-        flask.abort(404, f"Review {review_id} not found")
 
 @app.route("/update_review", methods=['PUT'])
 def update_review():
@@ -143,8 +116,6 @@ def update_review():
     new_review_text = data.get('new_review_text')
 
     mod_rev = ds_reviews.modify_review_text(review_id, new_review_text)
-    print("HELLO")
-    print(str(mod_rev))
     if mod_rev != None:
         return flask.jsonify({'message': 'Review updated successfully' + str(mod_rev)}), 200
     else:
