@@ -1,4 +1,5 @@
 import flask
+from flask_cors import CORS
 from reviews import ReviewsResource
 from resources.reviews_data_service import ReviewsDataService
 import notif
@@ -10,6 +11,7 @@ from middleware import MetricsMiddleware
 # If `entrypoint` is not defined in app.yaml, App Engine will look for an app
 # called `app` in `main.py`.
 app = flask.Flask(__name__)
+CORS(app)
 reviews_resource = ReviewsResource()
 all_reviews = reviews_resource.get_reviews()
 ds_reviews = ReviewsDataService()
