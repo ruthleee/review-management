@@ -1,0 +1,16 @@
+name: Cron Workflow
+
+on:
+    schedule:
+        - cron: "0 0 * * *"
+
+jobs:
+    cron_job:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Daily Summary Job
+              run: /batch
+
+              env:
+                TARGET: service-name
