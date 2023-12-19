@@ -54,6 +54,17 @@ class ReviewsDataService():
         except mysql.connector.Error as e:
             print("Error fetching reviews:", e)
             return []
+        
+    def get_one_review(self, review_id:int):
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT * FROM reviews WHERE review_id = %s", (review_id,))            
+            reviews = cursor.fetchone()
+            cursor.close()
+            return reviews
+        except mysql.connector.Error as e:
+            print("Error fetching reviews:", e)
+            return []
 
     def get_review_for_recipe(self, recipe_id: int):
         try:
