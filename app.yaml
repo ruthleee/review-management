@@ -1,2 +1,2 @@
 runtime: python311
-entrypoint: python -m main
+entrypoint: gunicorn -b :$PORT run:main
