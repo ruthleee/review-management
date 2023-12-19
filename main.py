@@ -37,7 +37,7 @@ def authorize_jwt():
 @app.get("/")
 def hello():
     """Return a friendly HTTP greeting."""
-    return "Hello Review Management!!!\n"
+    return "Hello Review Management CD TEST!!!\n"
 
 @app.get("/authorized_reviews")
 def authorized_get_all_reviews():
