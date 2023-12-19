@@ -28,7 +28,4 @@ jobs:
     - name: Deploy to GAE
       run: |
             gcloud app deploy --quiet
-
-  
-    - name: Test
-      run: curl "${{ steps.deploy.outputs.url }}"
+            gcloud app logs tail -s default
