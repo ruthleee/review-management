@@ -37,7 +37,7 @@ def authorize_jwt():
 @app.get("/")
 def hello():
     """Return a friendly HTTP greeting."""
-    return "Hello Review Management!!!\n"
+    return "Hello Review Management CD TEST!!!\n"
 
 @app.get("/authorized_reviews")
 def authorized_get_all_reviews():
@@ -47,6 +47,7 @@ def authorized_get_all_reviews():
     rev = ds_reviews.get_all_reviews()
     rev.headers.add ("access-control-allow-origin", "*")
     return rev
+    
 @app.get("/reviews")
 def get_all_reviews():
     #pagination implemented
