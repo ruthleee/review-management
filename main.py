@@ -1,5 +1,5 @@
 import flask
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from reviews import ReviewsResource
 from resources.reviews_data_service import ReviewsDataService
 import notif
