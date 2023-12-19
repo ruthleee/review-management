@@ -45,7 +45,9 @@ def authorized_get_all_reviews():
     # authorize with user_id
     user_id = authorize_jwt()
     rev = ds_reviews.get_all_reviews()
+    rev.headers.add ("access-control-allow-origin", "*")
     return rev
+    
 @app.get("/reviews")
 def get_all_reviews():
     #pagination implemented
@@ -56,28 +58,46 @@ def get_all_reviews():
     end_idx = start_idx + items_per_page
     rev = ds_reviews.get_all_reviews()
     paginated_reviews = rev[start_idx:end_idx]
-    return flask.jsonify(paginated_reviews)
+    rev = flask.jsonify(paginated_reviews)
+    rev.headers.add ("access-control-allow-origin", "*")
+
+    return rev
 
 @app.get("/recipe/<id>")
 def get_recipe_reviews(id):
-    return ds_reviews.get_review_for_recipe(int(id))
+    rev = ds_reviews.get_review_for_recipe(int(id))
+    rev = flask.jsonify(rev)
+    rev.headers.add ("access-control-allow-origin", "*")
+
+    return rev
 
 
 @app.get("/recipe/<id>/most-recent")
 def get_most_recent_reviews(id):
-    return ds_reviews.get_mostrecent_for_recipe(int(id))
+    rev = ds_reviews.get_mostrecent_for_recipe(int(id))
+    rev = flask.jsonify(rev)
+    rev.headers.add ("access-control-allow-origin", "*")
+
+    return rev
 
 @app.get("/recipe/<id>/top-rated")
 def get_top_rated_reviews(id):
-    return ds_reviews.get_toprated_for_recipe(int(id))
+    rev = ds_reviews.get_toprated_for_recipe(int(id))
+    rev = flask.jsonify(rev)
+    rev.headers.add ("access-control-allow-origin", "*")
 
+    return rev
 @app.get("/user/<id>")
 def get_user_reviews(id):
-    return ds_reviews.get_review_for_user(id)
+    rev = ds_reviews.get_review_for_user(id)
+    rev = flask.jsonify(rev)
+    rev.headers.add ("access-control-allow-origin", "*")
 
+    return rev
 
 
 @app.route("/post_review", methods=['POST'])
+@cross_origin()
 def post_review():
     """
     Endpoint for posting a new review.
@@ -100,6 +120,7 @@ def post_review():
         return flask.jsonify({'error': 'Could not create review'}), 404
 
 @app.route("/delete_review/<review_id>", methods=['DELETE'])
+@cross_origin()
 def delete_review(review_id):
 
     del_rev = ds_reviews.delete_review(review_id)
@@ -111,6 +132,7 @@ def delete_review(review_id):
 
 
 @app.route("/update_review", methods=['PUT'])
+@cross_origin()
 def update_review():
     data = flask.request.get_json()
     review_id = data.get('review_id')
