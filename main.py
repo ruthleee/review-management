@@ -62,6 +62,15 @@ def get_all_reviews():
 
     return rev
 
+@app.get("/reviews/<id>")
+def get_one_review(id):
+    #pagination implemented
+    rev = ds_reviews.get_one_review(int(id))
+    rev = flask.jsonify(rev)
+    rev.headers.add ("access-control-allow-origin", "*")
+
+    return rev
+
 @app.get("/recipe/<id>")
 def get_recipe_reviews(id):
     rev = ds_reviews.get_review_for_recipe(int(id))
