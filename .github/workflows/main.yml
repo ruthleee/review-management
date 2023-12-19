@@ -1,11 +1,11 @@
 name: Deploy to GAE
 
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
   push:
     branches: "*"
+  pull_request:
+    branches: "*"
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   deploy:
     name: Deploying to Google Cloud
@@ -24,9 +24,10 @@ jobs:
       uses: google-github-actions/setup-gcloud@v2
       with:
         project_id: ${{ secrets.GCP_PROJECT }}
-    
+
+    - name: Change file permissions
+      run: chmod 0755 *
+
     - name: Deploy to GAE
       run: |
-            chmod 0755 *
             gcloud app deploy --quiet
-            gcloud app logs tail -s default
