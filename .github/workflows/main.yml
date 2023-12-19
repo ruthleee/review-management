@@ -14,15 +14,15 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-
+    
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+        
     - name: Deploy to App Engine
       id: deploy
-      uses: google-github-actions/deploy-appengine@v0.2.0
-      with:
-        deliverables: app.yaml
-        version: v1
-        project_id: ${{ secrets.GCP_PROJECT }}
-        credentials: ${{ secrets.GCP_CREDENTIALS }}
-
-    - name: Test
-      run: curl "${{ steps.deploy.outputs.url }}"
+      run: |
+        gcloud auth activate-service-account --key-file=${{ secrets.GCP_CREDENTIALS }}
+        gcloud config set project ${{ secrets.GCP_PROJECT }}
+        gcloud app deploy --quiet
